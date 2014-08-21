@@ -1,10 +1,18 @@
 package cgl.pviz.test;
 
+import cgl.pviz.rpc.*;
+import cgl.pviz.rpc.Message;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 
 public class ActiveMQSender {
+    private boolean run = true;
+
+    public void stop() {
+        run = false;
+    }
+
     public void run() {
         try {
             // Create a ConnectionFactory
@@ -24,11 +32,9 @@ public class ActiveMQSender {
 
             // Create a messages
 
-            while (true) {
-                String text = "Hello world! From: " + Thread.currentThread().getName() + " : " + this.hashCode();
-                TextMessage message = session.createTextMessage(text);
-                // Tell the producer to send the message
-                System.out.println("Sent message: " + message.hashCode() + " : " + Thread.currentThread().getName());
+            while (run) {
+                Message.PvizMessage m = Message.PvizMessage.getDefaultInstance();
+
                 producer.send(message);
             }
             // Clean up
